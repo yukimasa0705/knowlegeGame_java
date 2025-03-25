@@ -30,3 +30,7 @@
 - GUIアプリ化（JavaFXやSwingを使用）
 - ネットワーク対戦対応（オンラインマルチプレイ）
 - AIを活用した難易度調整（PCプレイヤーの学習機能）
+
+[[作業日誌リンク]](https://github.com/yukimasa0705/knowlegeGame_java/tree/main/dailyReport))
+
+ここをクリックすれば、プロジェクトの進行や日々の作業メモを簡単に確認できます。進捗やアイデアを管理するために活用しています。
