@@ -1,7 +1,18 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class UniquePrefectureGame {
-    // 47都道府県のリスト
     private static final List<String> PREFECTURES = Arrays.asList(
         "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県", 
         "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県", 
@@ -13,53 +24,65 @@ public class UniquePrefectureGame {
     );
 
     public static void main(String[] args) {
-        // ゲームに使用する都道府県を管理するセット
-        Set<String> availablePrefectures = new HashSet<>(PREFECTURES); // まだ使用されていない都道府県のセット
-        Set<String> enteredPrefectures = new HashSet<>(); // プレイヤーが言った都道府県のセット
-        Set<String> usedByComputer = new HashSet<>(); // PCが言った都道府県のセット
-        
+        Set<String> availablePrefectures = new HashSet<>(PREFECTURES);
+        Set<String> usedPrefectures = new HashSet<>();
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
 
         System.out.println("47都道府県を重複なく交互に入力してください！（例: 青森県、大阪府）");
-        System.out.println("途中で終了したい場合は「終了」と入力してください。\n");
-
-        // プレイヤーとPCが交互に都道府県名を入力していく
-        while (!availablePrefectures.isEmpty()) { // 選択可能な都道府県がなくなるまで繰り返す
+        
+        while (!availablePrefectures.isEmpty()) {
             // PCのターン
             if (!availablePrefectures.isEmpty()) {
-                List<String> remainingList = new ArrayList<>(availablePrefectures); // 選択可能な都道府県リストを作成
-                String computerChoice = remainingList.get(random.nextInt(remainingList.size())); // ランダムに選択
+                List<String> remainingList = new ArrayList<>(availablePrefectures);
+                String computerChoice = remainingList.get(random.nextInt(remainingList.size()));
                 System.out.println("PC: " + computerChoice);
-                usedByComputer.add(computerChoice); // PCが言った都道府県を記録
-                availablePrefectures.remove(computerChoice); // 選択可能リストから削除
+                usedPrefectures.add(computerChoice);
+                availablePrefectures.remove(computerChoice);
             }
             
             // プレイヤーのターン
-            System.out.print("都道府県名を入力: ");
-            String input = scanner.nextLine().trim();
-
-            if (input.equals("終了")) { // 「終了」が入力された場合
-                System.out.println("ゲームを終了します。");
-                break; // ゲーム終了
+            String input = getPlayerInput(scanner);
+            
+            if (input == null) {
+                System.out.println("時間切れ！ゲームオーバー！");
+                break;
             }
 
-            // 入力チェック
+            if (!PREFECTURES.contains(input)) {
+                System.out.println("存在しない都道府県！ゲームオーバー！");
+                break;
+            }
+
             if (!availablePrefectures.contains(input)) {
-                System.out.println("無効な都道府県名、またはすでに使用された都道府県です。正式名称で入力してください。");
-                continue;
+                System.out.println("すでに使われた都道府県！ゲームオーバー！");
+                break;
             }
 
-            enteredPrefectures.add(input); // プレイヤーが言った都道府県を記録
-            availablePrefectures.remove(input); // 選択可能リストから削除
-            System.out.println("OK! 現在の入力数: " + enteredPrefectures.size());
+            usedPrefectures.add(input);
+            availablePrefectures.remove(input);
+            System.out.println("OK! 現在の入力数: " + usedPrefectures.size());
         }
         
-        // ゲーム終了時に表示されるメッセージ
-        if (availablePrefectures.isEmpty()) {
-            System.out.println("選択可能な都道府県がすべて使い果たされました！ゲーム終了！");
-        }
-        
+        System.out.println("ゲーム終了！");
         scanner.close();
+    }
+
+    // 20秒制限付きの入力受付
+    private static String getPlayerInput(Scanner scanner) {
+        System.out.print("都道府県名を入力（20秒以内）: ");
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<String> future = executor.submit(() -> scanner.nextLine().trim());
+
+        try {
+            return future.get(20, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            return null;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            executor.shutdown();
+        }
     }
 }
