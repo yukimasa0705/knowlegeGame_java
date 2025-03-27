@@ -23,85 +23,103 @@ public class UniquePrefectureGame {
         "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
     );
 
-    // 使用可能な都道府県と、すでに入力された都道府県を管理する
+    // 使用可能な都道府県を管理する
     private static final Set<String> availablePrefectures = new HashSet<>(PREFECTURES);
-    private static final Set<String> enteredPrefectures = new HashSet<>();
     private static final Scanner scanner = new Scanner(System.in);
-    private static final Random random = new Random();
     private static final int TIME_LIMIT = 20; // タイムアウトの時間（秒）
 
     public static void main(String[] args) {
         System.out.println("47都道府県を重複なく交互に入力してください！（例: 青森県、大阪府）");
         System.out.println("途中で終了したい場合は「終了」と入力してください。\n");
 
+        Player player = new Player("プレイヤー", availablePrefectures);
+        Computer computer = new Computer("PC", availablePrefectures);
         // 都道府県が残っている間、プレイヤーとコンピュータのターンを繰り返す
         while (!availablePrefectures.isEmpty()) {
-            if (!playerTurn()) break; // プレイヤーのターン
+            if (!player.takeTurn()) break; // プレイヤーのターン
             if (availablePrefectures.isEmpty()) {
                 System.out.println("選択可能な都道府県がすべて使い果たされました！ゲーム終了！");
                 break;
             }
-            computerTurn(); // コンピュータのターン
+            computer.takeTurn(); // コンピュータのターン
         }
         scanner.close();
     }
 
-    // コンピュータのターン
-    private static void computerTurn() {
-        if (!availablePrefectures.isEmpty()) {
-            List<String> remainingList = new ArrayList<>(availablePrefectures);
-            String computerChoice = remainingList.get(random.nextInt(remainingList.size()));
-            System.out.println("PC: " + computerChoice);
-            availablePrefectures.remove(computerChoice); // 使用した都道府県をリストから削除
-        }
-    }
-
-    // プレイヤーのターン
-    private static boolean playerTurn() {
-        System.out.print("都道府県名を入力（20秒以内）: ");
-        String input = getInputWithTimeout(); // タイムリミット内での入力取得
-
-        if (input == null) { // 時間切れの場合
-            System.out.println("時間切れ！ゲームオーバー！");
-            return false;
-        }
-
-        if (input.equals("終了")) { // プレイヤーが終了を選択した場合
-            System.out.println("ゲームを終了します。");
-            return false;
-        }
-
-        // 無効な入力（最初の都道府県リストに存在しない場合）と重複した入力（すでに入力された都道府県の場合）をチェック
-        if (!PREFECTURES.contains(input)) {
-            System.out.println("無効な都道府県名です。ゲームを終了します。");
-            return false;
-        }
-
-        if (!availablePrefectures.contains(input)) {
-            System.out.println("その都道府県はすでに使用されています。ゲームを終了します。");
-            return false;
-        }
-
-        enteredPrefectures.add(input); // 入力された都道府県を登録
-        availablePrefectures.remove(input); // 使用した都道府県をリストから削除
-        System.out.println("OK! 現在の入力数: " + enteredPrefectures.size());
-        return true;
-    }
-
-    // タイムリミット内での入力取得
-    private static String getInputWithTimeout() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<String> future = executor.submit(() -> scanner.nextLine().trim());
+    // コンピュータのクラス
+    static class Computer {
+        private String name;
+        private Set<String> availablePrefectures;
+        private Random random = new Random();
         
-        try {
-            return future.get(TIME_LIMIT, TimeUnit.SECONDS); // タイムリミット内で取得
-        } catch (TimeoutException e) {
-            future.cancel(true); // 時間切れで入力をキャンセル
-            return null;
-        } catch (Exception e) {
-            return null;
-        } finally {
-            executor.shutdown();
+        public Computer(String name, Set<String> availablePrefectures) {
+            this.name = name;
+            this.availablePrefectures = availablePrefectures;
+        }
+	    public void takeTurn() {
+	        if (!availablePrefectures.isEmpty()) {
+	            List<String> availableList = new ArrayList<>(availablePrefectures);
+	            String computerChoice = availableList.get(random.nextInt(availablePrefectures.size()));
+	            System.out.println(name + ": " + computerChoice);
+	            availablePrefectures.remove(computerChoice); // 使用した都道府県をリストから削除
+	        }
+        }
+	}
+
+    // プレイヤーのクラス
+    static class Player {
+        private String name;
+        private Set<String> availablePrefectures;
+        
+	    public Player(String name, Set<String> availablePrefectures) {
+	    	 this.name = name;
+	         this.availablePrefectures = availablePrefectures;
+	     }
+	    public boolean takeTurn() {
+	        System.out.print(name+":都道府県名を入力（20秒以内）: ");
+	        String input = getInputWithTimeout(); // タイムリミット内での入力取得
+	
+	        if (input == null) { // 時間切れの場合
+	            System.out.println("時間切れ！ゲームオーバー！");
+	            return false;
+	        }
+	
+	        if (input.equals("終了")) { // プレイヤーが終了を選択した場合
+	            System.out.println("ゲームを終了します。");
+	            return false;
+	        }
+	
+	        // 無効な入力（最初の都道府県リストに存在しない場合）と重複した入力（すでに入力された都道府県の場合）をチェック
+	        if (!PREFECTURES.contains(input)) {
+	            System.out.println("無効な都道府県名です。ゲームを終了します。");
+	            return false;
+	        }
+	
+	        if (!availablePrefectures.contains(input)) {
+	            System.out.println("その都道府県はすでに使用されています。ゲームを終了します。");
+	            return false;
+	        }
+	
+	        availablePrefectures.remove(input); // 使用した都道府県をリストから削除
+	        System.out.println("OK! 現在の入力数: " + (PREFECTURES.size() - availablePrefectures.size()));
+	        return true;
+	    }
+	
+	    // タイムリミット内での入力取得
+	    private static String getInputWithTimeout() {
+	        ExecutorService executor = Executors.newSingleThreadExecutor();
+	        Future<String> future = executor.submit(() -> scanner.nextLine().trim());
+	        
+	        try {
+	            return future.get(TIME_LIMIT, TimeUnit.SECONDS); // タイムリミット内で取得
+	        } catch (TimeoutException e) {
+	            future.cancel(true); // 時間切れで入力をキャンセル
+	            return null;
+	        } catch (Exception e) {
+	            return null;
+	        } finally {
+	            executor.shutdown();
+	        }
         }
     }
 }
