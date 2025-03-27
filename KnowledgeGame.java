@@ -1,22 +1,11 @@
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class KnowledgeGame {
-
     // 使用可能な都道府県を管理する
-    private static final Set<String> availablePrefectures = new HashSet<>(PREFECTURES);
+    private static final Set<String> availablePrefectures = new HashSet<>(PrefectureList.PREFECTURES);
     private static final Scanner scanner = new Scanner(System.in);
-    private static final int TIME_LIMIT = 20; // タイムアウトの時間（秒）
 
     public static void main(String[] args) {
         System.out.println("47都道府県を重複なく交互に入力してください！（例: 青森県、大阪府）");
@@ -24,6 +13,7 @@ public class KnowledgeGame {
 
         Player player = new Player("プレイヤー", availablePrefectures);
         Computer computer = new Computer("PC", availablePrefectures);
+
         // 都道府県が残っている間、プレイヤーとコンピュータのターンを繰り返す
         while (!availablePrefectures.isEmpty()) {
             if (!player.takeTurn()) break; // プレイヤーのターン
@@ -35,9 +25,4 @@ public class KnowledgeGame {
         }
         scanner.close();
     }
-
-    }
-   
-
-    
 }
