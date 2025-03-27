@@ -45,36 +45,45 @@ public class UniquePrefectureGame {
         }
         scanner.close();
     }
+//    ゲーマークラス（プレイヤー、コンピューターの親クラス）
+    static abstract class Gamer {
+        protected String name;
+        protected Set<String> availablePrefectures;
 
-    // コンピュータのクラス
-    static class Computer {
-        private String name;
-        private Set<String> availablePrefectures;
-        private Random random = new Random();
-        
-        public Computer(String name, Set<String> availablePrefectures) {
+        public Gamer(String name, Set<String> availablePrefectures) {
             this.name = name;
             this.availablePrefectures = availablePrefectures;
         }
-	    public void takeTurn() {
+
+        public abstract boolean takeTurn();
+    }
+    // コンピュータのクラス
+    static class Computer extends Gamer {
+        private Random random = new Random();
+        
+        public Computer(String name, Set<String> availablePrefectures) {
+            super(name, availablePrefectures);
+        }
+        
+        @Override
+        public boolean takeTurn() {
 	        if (!availablePrefectures.isEmpty()) {
 	            List<String> availableList = new ArrayList<>(availablePrefectures);
 	            String computerChoice = availableList.get(random.nextInt(availablePrefectures.size()));
 	            System.out.println(name + ": " + computerChoice);
 	            availablePrefectures.remove(computerChoice); // 使用した都道府県をリストから削除
 	        }
+	        return true;
         }
 	}
 
     // プレイヤーのクラス
-    static class Player {
-        private String name;
-        private Set<String> availablePrefectures;
-        
+    static class Player extends Gamer{
 	    public Player(String name, Set<String> availablePrefectures) {
-	    	 this.name = name;
-	         this.availablePrefectures = availablePrefectures;
+	    	super(name, availablePrefectures);
 	     }
+	    
+	    @Override
 	    public boolean takeTurn() {
 	        System.out.print(name+":都道府県名を入力（20秒以内）: ");
 	        String input = getInputWithTimeout(); // タイムリミット内での入力取得
