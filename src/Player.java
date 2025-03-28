@@ -1,4 +1,3 @@
-import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,10 +7,9 @@ import java.util.concurrent.TimeoutException;
 
 public class Player extends Gamer {
     
-	private static final Scanner scanner = new Scanner(System.in); // 追加
 	
-	public Player(String name, Set<String> availablePrefectures) {
-        super(name, availablePrefectures);
+	public Player(String name, Set<String> availableData) {
+        super(name, availableData);
     }
 
     @Override
@@ -35,20 +33,20 @@ public class Player extends Gamer {
             return false;
         }
 
-        if (!availablePrefectures.contains(input)) {
+        if (!availableData.contains(input)) {
             System.out.println("その都道府県はすでに使用されています。ゲームを終了します。");
             return false;
         }
 
-        availablePrefectures.remove(input); // 使用した都道府県をリストから削除
-        System.out.println("OK! 現在の入力数: " + (PrefectureList.PREFECTURES.size() - availablePrefectures.size()));
+        super.availableData.remove(input); // 使用した都道府県をリストから削除
+        System.out.println("OK! 現在の入力数: " + (KnowledgeGame.getTotalData() - availableData.size())); // 都道府県の総数を取得- availablePrefectures.size()));
         return true;
     }
 
     // タイムリミット内での入力取得
     private static String getInputWithTimeout() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<String> future = executor.submit(() -> scanner.nextLine().trim());
+        Future<String> future = executor.submit(() -> KnowledgeGame.getScanner().nextLine().trim());
         
         try {
             return future.get(20, TimeUnit.SECONDS); // タイムリミット内で取得
