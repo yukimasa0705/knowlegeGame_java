@@ -8,7 +8,9 @@ import java.util.Set;
 
 public class KnowledgeGame {
     // 使用可能な都道府県を管理する
-    private static final Set<String> availableData = new HashSet<>(PrefectureList.PREFECTURES);
+	// 元データ（都道府県リスト）をstaticで定義
+    public static Set<String> originalData = new HashSet<>();
+	private static final Set<String> availableData = new HashSet<>(PrefectureList.PREFECTURES);
     private static final Scanner scanner = new Scanner(System.in);
     private static final String CSV_FILE_PATH = "csv/prefectures.csv";
     private static int totalData = 0;
@@ -48,7 +50,8 @@ public class KnowledgeGame {
                 String[] gameData = line.split(",");
                 totalData = gameData.length; // 都道府県の総数を取得
                 for (String prefecture : gameData) {
-                    availableData.add(prefecture.trim());
+                	originalData.add(prefecture.trim());  // ここで元データを保持
+                    availableData.add(prefecture.trim()); // 使用可能な都道府県リストも更新
                 }
             }
             return gameIntro;

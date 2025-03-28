@@ -28,7 +28,7 @@ public class Player extends Gamer {
         }
 
         // 無効な入力（最初の都道府県リストに存在しない場合）と重複した入力（すでに入力された都道府県の場合）をチェック
-        if (!PrefectureList.PREFECTURES.contains(input)) {
+        if (!KnowledgeGame.originalData.contains(input)) {
             System.out.println("無効な都道府県名です。ゲームを終了します。");
             return false;
         }
