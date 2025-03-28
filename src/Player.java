@@ -14,7 +14,7 @@ public class Player extends Gamer {
 
     @Override
     public boolean takeTurn() {
-        System.out.print(name + ":都道府県名を入力（20秒以内）: ");
+        System.out.print(name + ":項目を入力（20秒以内）: ");
         String input = getInputWithTimeout(); // タイムリミット内での入力取得
 
         if (input == null) { // 時間切れの場合
@@ -27,19 +27,19 @@ public class Player extends Gamer {
             return false;
         }
 
-        // 無効な入力（最初の都道府県リストに存在しない場合）と重複した入力（すでに入力された都道府県の場合）をチェック
+        // 無効な入力（最初のリストに存在しない場合）と重複した入力（すでに入力された項目の場合）をチェック
         if (!KnowledgeGame.originalData.contains(input)) {
-            System.out.println("無効な都道府県名です。ゲームを終了します。");
+            System.out.println("無効な項目です。ゲームを終了します。");
             return false;
         }
 
         if (!availableData.contains(input)) {
-            System.out.println("その都道府県はすでに使用されています。ゲームを終了します。");
+            System.out.println("その項目はすでに使用されています。ゲームを終了します。");
             return false;
         }
 
-        super.availableData.remove(input); // 使用した都道府県をリストから削除
-        System.out.println("OK! 現在の入力数: " + (KnowledgeGame.getTotalData() - availableData.size())); // 都道府県の総数を取得- availablePrefectures.size()));
+        super.availableData.remove(input); // 使用した項目をリストから削除
+        System.out.println("OK! 現在の入力数: " + (KnowledgeGame.getTotalData() - availableData.size())); // 総項目から選択可能数を引き、現在入力した数を取得
         return true;
     }
 

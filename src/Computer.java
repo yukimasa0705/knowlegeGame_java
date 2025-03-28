@@ -16,7 +16,7 @@ public class Computer extends Gamer {
             List<String> availableList = new ArrayList<>(availableData);
             String computerChoice = availableList.get(random.nextInt(availableData.size()));
             System.out.println(name + ": " + computerChoice);
-            availableData.remove(computerChoice); // 使用した都道府県をリストから削除
+            availableData.remove(computerChoice); // 使用した項目をリストから削除
         }
         return true;
     }

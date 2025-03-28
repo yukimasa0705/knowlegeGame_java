@@ -7,8 +7,8 @@ import java.util.Set;
 
 
 public class KnowledgeGame {
-    // 使用可能な都道府県を管理する
-	// 元データ（都道府県リスト）をstaticで定義
+    // 使用可能な項目を管理する
+	// 元データをstaticで定義
     public static Set<String> originalData = new HashSet<>();
 	private static final Set<String> availableData = new HashSet<>();
     private static final Scanner scanner = new Scanner(System.in);
@@ -34,7 +34,7 @@ public class KnowledgeGame {
         while (!availableData.isEmpty()) {
             if (!player.takeTurn()) break; // プレイヤーのターン
             if (availableData.isEmpty()) {
-                System.out.println("選択可能な都道府県がすべて使い果たされました！ゲーム終了！");
+                System.out.println("選択可能な項目がすべて使い果たされました！ゲーム終了！");
                 break;
             }
             computer.takeTurn(); // コンピュータのターン
@@ -44,14 +44,14 @@ public class KnowledgeGame {
     private static String loadGameDataFromCSV() {
         try (BufferedReader br = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
             String gameIntro = br.readLine(); // 1行目を取得（説明文）
-            String line = br.readLine(); // 2行目（都道府県リスト）
+            String line = br.readLine(); // 2行目（データリスト）
             
             if (line != null) {
                 String[] gameData = line.split(",");
-                totalData = gameData.length; // 都道府県の総数を取得
+                totalData = gameData.length; // 項目の総数を取得
                 for (String prefecture : gameData) {
                 	originalData.add(prefecture.trim());  // ここで元データを保持
-                    availableData.add(prefecture.trim()); // 使用可能な都道府県リストも更新
+                    availableData.add(prefecture.trim()); // 使用可能な項目リストも更新
                 }
             }
             return gameIntro;
