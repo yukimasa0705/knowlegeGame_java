@@ -12,7 +12,7 @@ public class KnowledgeGame {
     public static Set<String> originalData = new HashSet<>();
 	private static final Set<String> availableData = new HashSet<>();
     private static final Scanner scanner = new Scanner(System.in);
-    private static final String CSV_FILE_PATH = "csv/prefectures.csv";
+    private static final String CSV_FILE_PATH = "knowlegeGame_java\\csv\\prefactures.csv";
     private static int totalData = 0;
 
     public static void main(String[] args) {
