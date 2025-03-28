@@ -10,7 +10,7 @@ public class KnowledgeGame {
     // 使用可能な都道府県を管理する
 	// 元データ（都道府県リスト）をstaticで定義
     public static Set<String> originalData = new HashSet<>();
-	private static final Set<String> availableData = new HashSet<>(PrefectureList.PREFECTURES);
+	private static final Set<String> availableData = new HashSet<>();
     private static final Scanner scanner = new Scanner(System.in);
     private static final String CSV_FILE_PATH = "csv/prefectures.csv";
     private static int totalData = 0;
